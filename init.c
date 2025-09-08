@@ -12,10 +12,47 @@ int	validate_data(t_data *data)
 	return (1);
 }
 
-int init_mutex(t_data data)
+int init_mutex(t_data *data)
 {
-    
+    int i;
+
+    // 철학자 배열 동적 할당
+    data->philo = malloc(sizeof(t_philo) * data->philos);
+    if (!data->philo)
+        return (0);
+
+    // 포크 배열 동적 할당
+    data->forks = malloc(sizeof(pthread_mutex_t) * data->philos);
+    if (!data->forks)
+        return (0);
+
+    // 포크 뮤텍스 초기화
+    i = 0;
+    while (i < data->philos)
+    {
+        if (pthread_mutex_init(&data->forks[i], NULL) != 0)
+            return (0);
+        data->philo[i].id = i + 1;
+        data->philo[i].data = data;
+        data->philo[i].left_f = i;
+        data->philo[i].right_f = (i + 1) % data->philos;
+        data->philo[i].meal = 0;
+        data->philo[i].last_eat = 0;
+        i++;
+    }
+
+    // 출력 뮤텍스 초기화
+    if (pthread_mutex_init(&data->print, NULL) != 0)
+        return (0);
+    // 종료 플래그 초기화 및 뮤텍스 초기화
+    data->exit_flag = 0;
+    if (pthread_mutex_init(&data->exit_mutex, NULL) != 0)
+        return 0;
+
+    return (1);
 }
+
+
 int	init_data(t_data *data, int ac, char **av)
 {
 	if (!data)
@@ -32,4 +69,5 @@ int	init_data(t_data *data, int ac, char **av)
 	    return (0);
     if(!(init_mutex(data)))
         return (0);
+	return (1);
 }
