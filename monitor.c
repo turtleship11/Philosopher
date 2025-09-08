@@ -9,8 +9,10 @@ void print_status(t_philo *philo, char *msg)
 
 void *monitor_routine(void *arg)
 {
-    t_data *data = (t_data *)arg;
+    t_data *data;
     int i;
+
+	data = (t_data *)arg;
 
     while (1)
     {
@@ -40,14 +42,14 @@ void *monitor_routine(void *arg)
                 }
                 if (all_full)
                 {
-                    set_exit(data); // 종료 플래그 설정
+                    set_exit(data);
                     return NULL;
                 }
             }
 
             i++;
         }
-        usleep(1000); // CPU 사용 줄이기
+        usleep(1000);
     }
     return NULL;
 }
@@ -58,18 +60,15 @@ void monitor_and_wait(t_data *data)
     pthread_t monitor_thread;
     int i;
 
-    // 감시 스레드 생성
     if (pthread_create(&monitor_thread, NULL, monitor_routine, data) != 0)
     {
         printf("monitor thread creation failed\n");
         return;
     }
 
-    // 종료 플래그 체크
     while (!check_exit(data))
         usleep(1000);
 
-    // 철학자 스레드 종료 대기
     i = 0;
     while (i < data->philos)
     {
@@ -77,10 +76,8 @@ void monitor_and_wait(t_data *data)
         i++;
     }
 
-    // 감시 스레드 종료
     pthread_join(monitor_thread, NULL);
 
-    // 7-1) 뮤텍스 해제
     i = 0;
     while (i < data->philos)
     {

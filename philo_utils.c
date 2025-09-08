@@ -1,5 +1,12 @@
 #include "philosopher.h"
 
+void unlock_forks_and_return(t_data *data, int first, int second)
+{
+    pthread_mutex_unlock(&data->forks[first]);
+    pthread_mutex_unlock(&data->forks[second]);
+    return;
+}
+
 int check_exit(t_data *data)
 {
     int flag;

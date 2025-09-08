@@ -1,35 +1,28 @@
 #include "philosopher.h"
 
-int create_threads(t_data *data)
-{
-    int i;
-
-    i = 0;
-    while (i < data->philos)
-    {
-        if (pthread_create(&data->philo[i].thread, NULL, routine, &data->philo[i]) != 0)
-            return 0; // 스레드 생성 실패
-        i++;
-    }
-    return 1;
-}
-
 void *routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
     t_data  *data  = philo->data;
+    philo->last_eat = get_time_ms();
 
     while (!check_exit(data))
     {
         think(philo);
+        if (check_exit(data)) break;
+
         eat(philo);
-        // num_of_eat 옵션: 지정 횟수 이상 먹으면 루프 탈출
+        if (check_exit(data)) break;
+
         if (data->num_of_eat > 0 && philo->meal >= data->num_of_eat)
             break;
+
         sleep_philo(philo);
+        if (check_exit(data)) break;
     }
-    return 0;  // 루프 종료 시 스레드 종료
+    return 0;
 }
+
 
 
 long get_time_ms(void)
@@ -41,42 +34,87 @@ long get_time_ms(void)
 
 void think(t_philo *philo)
 {
+    t_data *data = philo->data;
+    long start;
+
+    if (check_exit(data))
+        return;
+
     print_status(philo, "is thinking");
-    usleep(100); // 잠깐 생각
+
+    start = get_time_ms();
+    while (!check_exit(data) && get_time_ms() - start < 100)
+        usleep(1000);
 }
+
+
 
 void eat(t_philo *philo)
 {
     t_data *data = philo->data;
+    int first, second;
 
-    // 홀짝 데드락 방지
+    if (check_exit(data))
+        return;
+
+    // 홀짝 데드락 방지: 먼저 집을 포크 결정
     if (philo->id % 2 == 0)
     {
-        pthread_mutex_lock(&data->forks[philo->left_f]);
-        print_status(philo, "has taken left fork");
-        pthread_mutex_lock(&data->forks[philo->right_f]);
-        print_status(philo, "has taken right fork");
+        first = philo->left_f;
+        second = philo->right_f;
     }
     else
     {
-        pthread_mutex_lock(&data->forks[philo->right_f]);
-        print_status(philo, "has taken right fork");
-        pthread_mutex_lock(&data->forks[philo->left_f]);
-        print_status(philo, "has taken left fork");
+        first = philo->right_f;
+        second = philo->left_f;
     }
-    // 식사
+
+    // 첫 번째 포크
+    pthread_mutex_lock(&data->forks[first]);
+    if (check_exit(data)) {
+        pthread_mutex_unlock(&data->forks[first]);
+        return;
+    }
+    print_status(philo, "has taken fork");
+
+    // 두 번째 포크
+    pthread_mutex_lock(&data->forks[second]);
+    if (check_exit(data)) 
+	{
+        pthread_mutex_unlock(&data->forks[first]);
+        pthread_mutex_unlock(&data->forks[second]);
+        return;
+    }
+    print_status(philo, "has taken fork");
+
+    // if (check_exit(data)) 
+	// {
+    //     pthread_mutex_unlock(&data->forks[first]);
+    //     pthread_mutex_unlock(&data->forks[second]);
+    //     return;
+    // }
+
     print_status(philo, "is eating");
     philo->last_eat = get_time_ms();
     philo->meal++;
-    usleep(data->time_to_eat * 1000);
 
-    // 포크 내려놓기
-    pthread_mutex_unlock(&data->forks[philo->left_f]);
-    pthread_mutex_unlock(&data->forks[philo->right_f]);
+    long start = get_time_ms();
+    while (!check_exit(data) && get_time_ms() - start < data->time_to_eat)
+        usleep(100);
+
+    // 포크 반납
+    pthread_mutex_unlock(&data->forks[first]);
+    pthread_mutex_unlock(&data->forks[second]);
 }
+
 
 void sleep_philo(t_philo *philo)
 {
+    t_data *data = philo->data;
+    long start;
+
     print_status(philo, "is sleeping");
-    usleep(philo->data->time_to_sleep * 1000);
+    start = get_time_ms();
+    while (!check_exit(data) && get_time_ms() - start < data->time_to_sleep)
+        usleep(1000);
 }
