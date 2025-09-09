@@ -8,7 +8,7 @@ int create_threads(t_data *data)
     while (i < data->philos)
     {
         if (pthread_create(&data->philo[i].thread, NULL, routine, &data->philo[i]) != 0)
-            return 0; // 스레드 생성 실패
+            return 0;
         i++;
     }
     return 1;

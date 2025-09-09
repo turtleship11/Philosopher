@@ -21,6 +21,7 @@ typedef struct s_data
     pthread_mutex_t print;
     pthread_mutex_t exit_mutex;
     int             exit_flag;
+	long start_time;
 }   t_data;
 
 typedef struct s_philo
@@ -29,8 +30,8 @@ typedef struct s_philo
     int         id;      
     int         left_f;    
     int         right_f;   
-    int         meal;        
-    long        last_eat;   
+    _Atomic int         meal;        
+    _Atomic long        last_eat;   
     pthread_t   thread;   
 } t_philo;
 
@@ -52,5 +53,8 @@ void eat(t_philo *philo);
 void sleep_philo(t_philo *philo);
 void *routine(void *arg);
 int create_threads(t_data *data);
+void print_death(t_philo *philo);
+int	p_error(char *s);
+long get_elapsed_time(t_data *data);
 
 #endif

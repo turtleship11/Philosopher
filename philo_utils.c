@@ -65,3 +65,9 @@ int	ft_atoi(const char *str)
 	}
 	return (v * c);
 }
+
+int	p_error(char *s)
+{
+	printf("Error: %s\n", s);
+	return (-1);
+}
