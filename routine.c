@@ -4,9 +4,24 @@ void *routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
     t_data  *data  = philo->data;
-    philo->last_eat = get_time_ms();
 
-    while (check_exit(data) == 0)
+
+	while (get_time_ms() < data->wait_time)
+		usleep(100); 
+
+	philo->last_eat = data->wait_time;  
+
+    if (data->philos == 1)
+    {
+        pthread_mutex_lock(&data->forks[philo->left_f]);
+        print_status(philo, "has taken a fork");
+        usleep(data->time_to_die * 1000);
+        set_exit(data);
+        pthread_mutex_unlock(&data->forks[philo->left_f]);
+
+        return 0;
+    }
+    while (!check_exit(data))
     {
         think(philo);
         eat(philo);
@@ -15,10 +30,11 @@ void *routine(void *arg)
             break;
 
         sleep_philo(philo);
-		usleep(100);
+        usleep(100);
     }
     return 0;
 }
+
 
 long get_time_ms(void)
 {
@@ -81,7 +97,7 @@ void eat(t_philo *philo)
         pthread_mutex_unlock(&data->forks[first]);
         return;
     }
-    print_status(philo, "has taken fork");
+    print_status(philo, "has taken a fork");
 
     pthread_mutex_lock(&data->forks[second]);
     if (check_exit(data)) 
@@ -90,7 +106,7 @@ void eat(t_philo *philo)
         pthread_mutex_unlock(&data->forks[second]);
         return;
     }
-    print_status(philo, "has taken fork");
+    print_status(philo, "has taken a fork");
 
     if (!check_exit(data)) 
     {

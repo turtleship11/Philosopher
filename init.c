@@ -23,6 +23,7 @@ int init_mutex(t_data *data)
     data->forks = malloc(sizeof(pthread_mutex_t) * data->philos);
     if (!data->forks)
         return (0);
+
     //init _fork mutex
     i = 0;
 	long long current_time = get_time_ms();

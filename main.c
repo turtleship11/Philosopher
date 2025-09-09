@@ -12,10 +12,12 @@ int main(int ac, char **av)
 	{
         return(p_error("Error : init_error"));
 	}
-	data.start_time = get_time_ms();
 
+	data.start_time = get_time_ms();
+	data.wait_time = data.start_time + 50;
     if (!create_threads(&data))
         return (p_error("Error : thread_error\n"));
+
     monitor_and_wait(&data);
     return 0;
 }

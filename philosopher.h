@@ -22,6 +22,7 @@ typedef struct s_data
     pthread_mutex_t exit_mutex;
     int             exit_flag;
 	long start_time;
+	long wait_time;
 }   t_data;
 
 typedef struct s_philo
