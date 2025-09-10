@@ -19,13 +19,13 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	data = philo->data;
-	while (get_time_ms() < data->start_time)
-		usleep(100);
+	// while (get_time_ms() < data->start_time)
+	// 	usleep(100); ////이코드 사실상 불필요 
 	philo->last_eat = data->start_time;
 	if (data->philos == 1)
 	{
+		think(philo);//생각 먼저
 		pthread_mutex_lock(&data->forks[philo->left_f]);
-		think(philo);
 		print_status(philo, "has taken a fork");
 		usleep(data->time_to_die * 1000);
 		set_exit(data);
@@ -58,9 +58,11 @@ void	sleep_philo(t_philo *philo)
 	long	start;
 
 	data = philo->data;
-	if (check_exit(data))
-		return ;
-	print_status(philo, "is sleeping");
+	if (!check_exit(data))
+	{
+		print_status(philo, "is sleeping");
+	}
+
 	start = get_time_ms();
 	while (!check_exit(data) && get_time_ms() - start < data->time_to_sleep)
 		usleep(500);

@@ -12,6 +12,27 @@
 
 #include "philosopher.h"
 
+int	init_data(t_data *data, int ac, char **av)
+{
+	if (!data)
+		return (0);
+	data->philos = ft_atoi(av[1]);
+	data->time_to_die = ft_atoi(av[2]);
+	data->time_to_eat = ft_atoi(av[3]);
+	data->time_to_sleep = ft_atoi(av[4]);
+	if (ac == 6)
+		data->num_of_eat = ft_atoi(av[5]);
+	else
+		data->num_of_eat = 0;
+	if (!(validate_data(data)))
+		return (0);
+	if (!(init_mutex(data)))
+	{
+		return (0);
+	}
+	return (1);
+}
+
 int	validate_data(t_data *data)
 {
 	if (data->philos <= 0 || data->philos > 200)
@@ -60,7 +81,7 @@ int	init_forks_and_philosophers(t_data *data, long long current_time)
 	while (i < data->philos)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL) != 0 || !init_philo(data,
-				i, current_time))
+				i, current_time)) // 여기도 사실상 해당안됨 그냥 init_philo불러오기위함
 		{
 			free_resources(data);
 			return (0);
@@ -78,26 +99,5 @@ int	init_philo(t_data *data, int i, long long current_time)
 	data->philo[i].right_f = (i + 1) % data->philos;
 	data->philo[i].meal = 0;
 	data->philo[i].last_eat = current_time;
-	return (1);
-}
-
-int	init_data(t_data *data, int ac, char **av)
-{
-	if (!data)
-		return (0);
-	data->philos = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	if (ac == 6)
-		data->num_of_eat = ft_atoi(av[5]);
-	else
-		data->num_of_eat = 0;
-	if (!(validate_data(data)))
-		return (0);
-	if (!(init_mutex(data)))
-	{
-		return (0);
-	}
 	return (1);
 }
