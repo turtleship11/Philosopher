@@ -1,23 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/10 12:53:33 by jaeklee           #+#    #+#             */
+/*   Updated: 2025/09/10 16:35:53 by jaeklee          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosopher.h"
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-    t_data data;
+	t_data	data;
 
-    if (ac != 5 && ac != 6)
-        return(p_error("Error : invaild args"));
-    if (is_num(ac, av) != 1)
-        return(p_error("Error : is not number"));
-    if(!(init_data(&data,ac,av)))
+	if (ac != 5 && ac != 6)
+		return (p_error("invaild args"));
+	if (is_num(ac, av) != 1)
+		return (p_error("Invaild input"));
+	if (!(init_data(&data, ac, av)))
 	{
-        return(p_error("Error : init_error"));
+		return (p_error("Error : init_error"));
 	}
-
 	data.start_time = get_time_ms();
-	data.wait_time = data.start_time + 50;
-    if (!create_threads(&data))
-        return (p_error("Error : thread_error\n"));
-
-    monitor_and_wait(&data);
-    return 0;
+	if (!create_threads(&data))
+		return (p_error("Error : thread_error\n"));
+	monitor_and_wait(&data);
+	return (0);
 }
