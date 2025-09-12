@@ -6,7 +6,7 @@
 /*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 12:53:40 by jaeklee           #+#    #+#             */
-/*   Updated: 2025/09/10 16:39:51 by jaeklee          ###   ########.fr       */
+/*   Updated: 2025/09/11 10:55:14 by jaeklee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ int	ft_atoi(const char *str)
 {
 	int	c;
 	int	v;
+	int	digit;
 
 	c = 1;
 	v = 0;
@@ -73,7 +74,10 @@ int	ft_atoi(const char *str)
 	}
 	while (*str >= '0' && *str <= '9')
 	{
-		v = v * 10 + (*str - '0');
+		digit = *str - '0';
+		if (v > ((INT_MAX - digit) / 10))
+			return (-1);
+		v = v * 10 + (digit);
 		str++;
 	}
 	return (v * c);

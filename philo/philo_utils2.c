@@ -6,7 +6,7 @@
 /*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 14:25:04 by jaeklee           #+#    #+#             */
-/*   Updated: 2025/09/10 16:42:37 by jaeklee          ###   ########.fr       */
+/*   Updated: 2025/09/12 12:51:23 by jaeklee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,18 @@ int	p_error(char *s)
 {
 	printf("Error: %s\n", s);
 	return (-1);
+}
+
+void	get_forks(t_philo *philo, int *first, int *second)
+{
+	if (philo->id % 2 == 0)
+	{
+		*first = philo->left_f;
+		*second = philo->right_f;
+	}
+	else
+	{
+		*second = philo->left_f;
+		*first = philo->right_f;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 16:51:37 by jaeklee           #+#    #+#             */
-/*   Updated: 2025/09/10 16:57:49 by jaeklee          ###   ########.fr       */
+/*   Updated: 2025/09/12 21:08:06 by jaeklee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <limits.h>
 
 typedef struct s_philo	t_philo;
 
@@ -69,7 +70,6 @@ void					*routine(void *arg);
 int						create_threads(t_data *data);
 void					print_death(t_philo *philo);
 int						p_error(char *s);
-long					get_elapsed_time(t_data *data);
 
 int						init_forks_and_philosophers(t_data *data,
 							long long current_time);
@@ -77,4 +77,6 @@ void					free_resources(t_data *data);
 int						check_death(t_data *data);
 int						check_all_full(t_data *data);
 int						take_forks(t_philo *philo);
+int						wait_flag(t_data *data);
+void					get_forks(t_philo *philo, int *first, int *second);
 #endif

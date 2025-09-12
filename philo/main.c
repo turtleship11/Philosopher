@@ -6,7 +6,7 @@
 /*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 12:53:33 by jaeklee           #+#    #+#             */
-/*   Updated: 2025/09/10 16:35:53 by jaeklee          ###   ########.fr       */
+/*   Updated: 2025/09/11 17:15:56 by jaeklee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ int	main(int ac, char **av)
 		return (p_error("Invaild input"));
 	if (!(init_data(&data, ac, av)))
 	{
-		return (p_error("Error : init_error"));
+		return (p_error("init_error or value is too big"));
 	}
 	data.start_time = get_time_ms();
 	if (!create_threads(&data))
-		return (p_error("Error : thread_error\n"));
+		return (p_error("thread_error\n"));
 	monitor_and_wait(&data);
 	return (0);
 }

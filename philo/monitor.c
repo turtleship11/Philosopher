@@ -6,7 +6,7 @@
 /*   By: jaeklee <jaeklee@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 12:53:48 by jaeklee           #+#    #+#             */
-/*   Updated: 2025/09/10 16:39:14 by jaeklee          ###   ########.fr       */
+/*   Updated: 2025/09/11 17:56:55 by jaeklee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	check_death(t_data *data)
 		time_since_last_meal = get_time_ms() - data->philo[i].last_eat;
 		if (time_since_last_meal >= data->time_to_die)
 		{
-			print_death(&data->philo[i]);
 			set_exit(data);
+			print_death(&data->philo[i]);
 			return (1);
 		}
 		i++;
@@ -55,6 +55,7 @@ int	check_all_full(t_data *data)
 			set_exit(data);
 			return (1);
 		}
+		usleep(100);
 	}
 	return (0);
 }
@@ -70,6 +71,7 @@ void	*monitor_routine(void *arg)
 			return (NULL);
 		if (check_all_full(data))
 			return (NULL);
+		usleep(10);
 	}
 	return (NULL);
 }
